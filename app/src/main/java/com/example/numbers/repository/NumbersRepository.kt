@@ -2,7 +2,6 @@ package com.example.numbers.repository
 
 import android.util.Log
 import com.example.numbers.network.NumbersApi
-import com.example.numbers.network.NumbersApiResult
 import com.example.numbers.util.Resource
 import javax.inject.Inject
 import javax.inject.Singleton

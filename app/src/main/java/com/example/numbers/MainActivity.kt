@@ -40,10 +40,11 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     fun Greeting(name: String, modifier: Modifier = Modifier) {
-        val textState = viewModel.mainState.collectAsState()
+        val textState = viewModel.textState.collectAsState()
+        val errorState = viewModel.errorState.collectAsState()
+
         Text(
-//            text = textState.value.text + "\n" + textState.value.error,
-            text = textState.value,
+            text = textState.value + "\n" + errorState.value,
             modifier = modifier
         )
     }
