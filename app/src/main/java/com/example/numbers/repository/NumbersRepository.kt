@@ -17,7 +17,7 @@ class NumbersRepository @Inject constructor(
         val response = try {
             numbersApi.getFromNumbers(numbers, type)
         } catch (e: Exception) {
-            Log.d("testing", "${e.message}")
+            Log.e("testing", "${e.message}")
             return Resource.Error("${e.message}")
         }
 

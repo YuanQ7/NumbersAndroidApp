@@ -1,6 +1,7 @@
 package com.example.numbers.di
 
 import com.example.numbers.network.NumbersApi
+import com.example.numbers.repository.NumberData
 import com.example.numbers.repository.NumbersRepository
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -20,7 +21,7 @@ object NumbersModule {
 
     @Provides
     @Singleton
-    fun provideMovieApi(moshi: Moshi): NumbersApi {
+    fun provideMovieApi(): NumbersApi {
         return Retrofit.Builder()
 //            .addConverterFactory(MoshiConverterFactory.create(moshi))
             .addConverterFactory(ScalarsConverterFactory.create())
@@ -29,17 +30,28 @@ object NumbersModule {
             .create(NumbersApi::class.java)
     }
 
+//    @Provides
+//    @Singleton
+//    fun provideMoshi(): Moshi {
+//        return Moshi.Builder()
+//            .add(KotlinJsonAdapterFactory())
+//            .build()
+//    }
+
     @Provides
     @Singleton
-    fun provideMoshi(): Moshi {
-        return Moshi.Builder()
-            .add(KotlinJsonAdapterFactory())
-            .build()
+    fun provideNumberData(): NumberData {
+        return NumberData()
     }
+
     @Provides
     @Singleton
-    fun provideRepository(numbersApi: NumbersApi): NumbersRepository {
+    fun provideRepository(
+        numbersApi: NumbersApi
+    ): NumbersRepository {
         return NumbersRepository(numbersApi)
     }
+
+
 
 }

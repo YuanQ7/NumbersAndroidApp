@@ -1,4 +1,4 @@
-package com.example.numbers
+package com.example.numbers.activity
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -25,6 +25,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         viewModel.grabData("42,5")
+        viewModel.grabData("7..10,5")
         setContent {
             NumbersTheme {
                 // A surface container using the 'background' color from the theme
