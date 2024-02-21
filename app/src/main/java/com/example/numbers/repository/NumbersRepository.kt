@@ -11,11 +11,11 @@ class NumbersRepository @Inject constructor(
     private val numbersApi: NumbersApi
 ){
     suspend fun getFromNumbers(
-        numbers: String,
+        numbers: List<Int>,
         type: String
     ) : Resource<String> {
         val response = try {
-            numbersApi.getFromNumbers(numbers, type)
+            numbersApi.getFromNumbers(numbers.joinToString(","), type)
         } catch (e: Exception) {
             Log.e("testing", "${e.message}")
             return Resource.Error("${e.message}")

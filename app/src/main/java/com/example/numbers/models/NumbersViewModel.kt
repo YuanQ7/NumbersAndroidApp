@@ -11,22 +11,29 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.random.Random
+import kotlin.random.nextInt
 
 @HiltViewModel
 class NumbersViewModel @Inject constructor(
     private val repository: NumbersRepository,
     private val numberData: NumberData
 ) : ViewModel() {
-
     private val _textState = MutableStateFlow("")
     val textState = _textState.asStateFlow()
 
     private val _errorState = MutableStateFlow(false)
     val errorState = _errorState.asStateFlow()
 
+    private val _minNumState = MutableStateFlow("0")
+    val minNumState = _minNumState.asStateFlow()
+
+    private val _maxNumState = MutableStateFlow("Inf")
+    val maxNumState = _maxNumState.asStateFlow()
+
     fun grabData(numbers: String) {
         viewModelScope.launch {
-            val response = repository.getFromNumbers(numbers, "trivia")
+            val response = repository.getFromNumbers(randNumbers(1, 1000), "trivia")
 
             when (response) {
                 is Resource.Success -> {
@@ -60,11 +67,13 @@ class NumbersViewModel @Inject constructor(
         for (i in arr.indices step 2) {
             // check for error cases
             // only keep digits for the num
-            val num = arr[i].filter {
-                it.isDigit()
-            }.toInt()
+//            val num = arr[i].filter {
+//                it.isDigit()
+//            }.toInt()
+            val sep = arr[i + 1].split(" ", limit = 2)
 
-            val text = arr[i + 1]
+            val num = sep[0].toInt()
+            val text = sep[1]
 
             if (num !in map) {
                 map[num] = mutableSetOf(text)
@@ -72,5 +81,16 @@ class NumbersViewModel @Inject constructor(
                 map[num]!!.add(text)
             }
         }
+    }
+
+    private fun randNumbers(start: Int, end: Int) : List<Int> {
+        val ints = generateSequence {
+            Random.nextInt(start until end)
+        }
+            .distinct()
+            .take(100)
+            .sorted()
+            .toList()
+        return ints
     }
 }
