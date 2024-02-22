@@ -6,10 +6,14 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredWidth
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
@@ -31,6 +35,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Transparent
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalTextInputService
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -43,6 +48,7 @@ import androidx.compose.ui.unit.sp
 import com.example.numbers.models.NumbersViewModel
 import com.example.numbers.ui.theme.NumbersTheme
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.StateFlow
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -53,7 +59,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         viewModel.grabData("42,5")
-        viewModel.grabData("7..10,5")
         setContent {
             NumbersTheme {
                 // A surface container using the 'background' color from the theme
@@ -67,15 +72,51 @@ class MainActivity : ComponentActivity() {
 
                     Column(
                         modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.Center,
+                        verticalArrangement = Arrangement.Top,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
                             modifier = Modifier,
                             text = "${minNumState.value}, ${maxNumState.value}",
-                            style = TextStyle(fontSize = 30.sp)
+                            style = TextStyle(
+                                fontSize = 30.sp
+                            )
                         )
-                        InputTextField()
+
+                        // TODO: test if this spacing works for all screen sizes
+                        Row(
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            InputTextField(
+                                modifier = Modifier
+                                    .padding(top = 16.dp)     // acts as margin
+                                    .padding(horizontal = 16.dp)
+                                    .fillMaxWidth(0.65f)
+                                    .clip(RoundedCornerShape(4.dp))
+                                    .background(Color(0xFFEBE0F0))
+                                    .padding(4.dp)            // acts as padding
+                            )
+                            Text(
+                                modifier = Modifier.padding(top = 12.dp),
+                                text = "is...",
+                                style = TextStyle(
+                                    fontSize = 50.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    textAlign = TextAlign.End
+                                )
+                            )
+                        }
+                        Text(
+                            modifier = Modifier.padding(horizontal = 20.dp)
+                                .fillMaxSize(),
+                            text = textState.value,
+                            style = TextStyle(
+                                fontSize = 35.sp,
+                                fontWeight = FontWeight.Bold,
+                                textAlign = TextAlign.Center
+                            )
+                        )
+
                     }
                 }
             }
@@ -94,15 +135,11 @@ class MainActivity : ComponentActivity() {
             LocalTextSelectionColors provides customTextSelectionColors,
             LocalTextInputService provides null
         ) {
-            var text by rememberSaveable { mutableStateOf("     ") }
+            var text by rememberSaveable { mutableStateOf("      ") }
 
             BasicTextField(
                 // modifier order matters!
-                modifier = Modifier
-                    .padding(16.dp)     // acts as margin
-                    .clip(RoundedCornerShape(4.dp))
-                    .background(Color(0xFFEBE0F0))
-                    .padding(12.dp),    // acts as padding
+                modifier = modifier,
                 value = text,
                 onValueChange = {
                     text = it.filter { char ->
@@ -110,7 +147,6 @@ class MainActivity : ComponentActivity() {
                     }.padEnd(5, ' ').substring(0, 5)
                 },
                 singleLine = true,
-                cursorBrush = SolidColor(Transparent),
                 textStyle = TextStyle(
                     fontSize = 40.sp,
                     fontWeight = FontWeight.Bold,
